@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="PicPassTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorBlue</item>
+        <item name="colorPrimaryDark">@color/colorDarkBlue</item>
+        <item name="colorAccent">@color/colorDarkestBlue</item>
+    </style>
+
+</resources>
