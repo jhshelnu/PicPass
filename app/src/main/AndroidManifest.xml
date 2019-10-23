@@ -10,11 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/PicPassTheme">
         <activity
-            android:name=".PasswordGeneratorActivity"
-            android:launchMode="singleInstance"/>
+            android:name=".PasswordGeneratorActivity" />
         <activity
             android:name=".PINActivity"
-            android:launchMode="singleTop"
             android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -2,30 +2,30 @@ package com.picpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class PINActivity extends AppCompatActivity {
-    Context ctx;
+    private static final String TAG = "PINActivity";
+
     ImageView bubble1, bubble2, bubble3, bubble4; // The 4 PIN bubbles that fill-in as the user types
+    EditText pinTextField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
-        ctx = this;
 
         bubble1 = findViewById(R.id.bubble1);
         bubble2 = findViewById(R.id.bubble2);
         bubble3 = findViewById(R.id.bubble3);
         bubble4 = findViewById(R.id.bubble4);
 
-        EditText pinTextField = findViewById(R.id.pin_text);
+        pinTextField = findViewById(R.id.pin_text);
 
         // Define the actions to take when the pin text field changes
         pinTextField.addTextChangedListener(new TextWatcher() {
@@ -59,7 +59,10 @@ public class PINActivity extends AppCompatActivity {
                         break;
                     case 4:
                         bubble4.setImageResource(R.drawable.circle_filled);
-                        // Launch second activity
+                        Intent intent = new Intent(getApplicationContext(), PasswordGeneratorActivity.class);
+                        intent.putExtra("pin", currentPINText.toString());
+                        startActivity(intent);
+                        break;
                 }
             }
         });
