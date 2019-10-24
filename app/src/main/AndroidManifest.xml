@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/PicPassTheme">
         <activity
-            android:name=".PasswordGeneratorActivity" />
+            android:name=".PasswordPickerActivity" />
         <activity
             android:name=".PINActivity"
             android:windowSoftInputMode="stateAlwaysVisible">
