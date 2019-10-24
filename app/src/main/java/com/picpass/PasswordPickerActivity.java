@@ -2,7 +2,6 @@ package com.picpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,14 +13,14 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
 
     ImageView[] images;
+    String pin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_picker);
 
-        Intent intent = getIntent();
-        String pin = intent.getStringExtra("pin");
+        pin = getIntent().getStringExtra("pin");
 
         images = new ImageView[9];
         images[0] = findViewById(R.id.image0);
@@ -34,16 +33,16 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-        String[] imageNames = {"beach", "castle", "cape",
-                                "mountains", "sea", "mill",
-                                "windmills", "desert", "bridge"};
+        String[] imageNames = {"river", "castle", "cape",
+                                "bridge", "fields", "mill",
+                                "beach", "sea", "iceberg"};
 
         initializeImages(imageNames);
     }
 
     private void initializeImages(String[] imageNames) {
         if (imageNames.length != 9) {
-            throw new IllegalArgumentException("imageIDs array must be of size 9!");
+            throw new IllegalArgumentException("imageNames array must be of size 9!");
         }
 
         try {
