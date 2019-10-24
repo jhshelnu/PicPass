@@ -4,8 +4,8 @@ Universal Picture Passwords
 Developers:
 --------------
 John Shelnutt
-Jackson Gregory
 
+Jackson Gregory
 
 Credit:
 --------
