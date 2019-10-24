@@ -4,7 +4,7 @@
     android:shape="oval">
     <stroke
         android:width="2dp"
-        android:color="@color/colorDarkBlue" />
+        android:color="@color/colorBlue" />
     <size
         android:width="45dp"
         android:height="45dp" />

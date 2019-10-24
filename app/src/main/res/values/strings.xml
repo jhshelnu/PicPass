@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PicPass</string>
+    <string name="enter_pin_text">Enter a PIN</string>
+    <string name="generate_btn_text">Generate password</string>
 </resources>
