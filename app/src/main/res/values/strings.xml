@@ -2,4 +2,5 @@
     <string name="app_name">PicPass</string>
     <string name="enter_pin_text">Enter a PIN</string>
     <string name="generate_btn_text">GENERATE PASSWORD</string>
+    <string name="sequence_too_short">You must select at least 3 images</string>
 </resources>

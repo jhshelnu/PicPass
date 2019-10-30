@@ -3,23 +3,38 @@ package com.picpass;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
+    private static final int GENERATED_PASSWORD_LENGTH = 30; /* /!\ WARNING /!\: CHANGING THIS BREAKS EXISTING PASSWORDS!!!! */
+    private static final int MINIMUM_LENGTH = 3;
 
-    ImageView[] images;
-    String pin;
+    private String pin;
+    private ImageView[] images;
+    private ArrayList<String> sequence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_picker);
 
+        sequence = new ArrayList<>();
         pin = getIntent().getStringExtra("pin");
 
         images = new ImageView[9];
@@ -56,11 +71,42 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     public void onImageClick(View v) {
-        Toast.makeText(this, String.valueOf(v.getTag()), Toast.LENGTH_SHORT).show();
+        sequence.add(String.valueOf(v.getTag()));
     }
 
     private int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
         Field field = R.drawable.class.getDeclaredField(resName);
         return field.getInt(field);
+    }
+
+    public void onGeneratePassword(View v) {
+        if (sequence.size() < MINIMUM_LENGTH) {
+            Toast.makeText(this, getResources().getString(R.string.sequence_too_short), Toast.LENGTH_SHORT).show();
+        } else {
+            String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
+            if (generatedPassword != null) {
+                Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, generatedPassword);
+            }
+            sequence.clear();
+        }
+    }
+
+    private String generatePassword(String toEncode, String key) {
+        try {
+            String algorithm = "HmacSHA256";
+            SecretKeySpec sKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
+            Mac sha256_HMAC = Mac.getInstance(algorithm);
+            sha256_HMAC.init(sKey);
+
+            // "aA1!" guarantees the passwords have: lowercase, uppercase, number, symbol
+            // 47 is the length of generated passwords (counting "aA1!"), we chop off enough chars so password is of length GENERATED_PASSWORD_LENGTH.
+            String encodedString = Base64.encodeToString(sha256_HMAC.doFinal(toEncode.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP | Base64.NO_PADDING | Base64.URL_SAFE);
+            return encodedString.concat("aA1!").substring(47 - GENERATED_PASSWORD_LENGTH);
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException e){
+            Log.wtf(TAG, Log.getStackTraceString(e));
+            return null;
+        }
     }
 }

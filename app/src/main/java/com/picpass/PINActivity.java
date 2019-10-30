@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -67,5 +68,9 @@ public class PINActivity extends AppCompatActivity {
             }
         });
 
+        ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(pinTextField, InputMethodManager.SHOW_FORCED);
+        pinTextField.requestFocus();
+        pinTextField.callOnClick();
     }
+
 }
