@@ -82,14 +82,15 @@ public class PasswordPickerActivity extends AppCompatActivity {
     public void onGeneratePassword(View v) {
         if (sequence.size() < MINIMUM_LENGTH) {
             Toast.makeText(this, getResources().getString(R.string.sequence_too_short), Toast.LENGTH_SHORT).show();
-        } else {
-            String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
-            if (generatedPassword != null) {
-                Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, generatedPassword);
-            }
-            sequence.clear();
+            return;
         }
+
+        String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
+        if (generatedPassword != null) {
+            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, generatedPassword);
+        }
+        sequence.clear();
     }
 
     private String generatePassword(String toEncode, String key) {
