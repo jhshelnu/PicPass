@@ -91,7 +91,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     public void onBackspace(View v) {
         if (sequence.size() > 0) {
-//            backspaceButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
             sequence.remove(sequence.size() - 1);
             countText.setText(String.valueOf(sequence.size()));
         }
