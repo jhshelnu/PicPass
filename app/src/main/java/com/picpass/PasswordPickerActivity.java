@@ -89,6 +89,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
         if (generatedPassword != null) {
             Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
             Log.d(TAG, generatedPassword);
+        } else {
+            Toast.makeText(this, "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
         }
         sequence.clear();
     }
@@ -101,10 +103,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
             sha256_HMAC.init(sKey);
 
             // "aA1!" guarantees the passwords have: lowercase, uppercase, number, symbol
-            // 47 is the length of generated passwords (counting "aA1!"), we chop off enough chars so password is of length GENERATED_PASSWORD_LENGTH.
             String encodedString = Base64.encodeToString(sha256_HMAC.doFinal(toEncode.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP | Base64.NO_PADDING | Base64.URL_SAFE);
-            return encodedString.concat("aA1!").substring(47 - GENERATED_PASSWORD_LENGTH);
-
+            return encodedString.substring(0, GENERATED_PASSWORD_LENGTH - 4).concat("aA1!");
         } catch (NoSuchAlgorithmException | InvalidKeyException e){
             Log.wtf(TAG, Log.getStackTraceString(e));
             return null;
