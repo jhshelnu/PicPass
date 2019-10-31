@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private String pin;
     private ImageView[] images;
     private ArrayList<String> sequence;
+    private Button backspaceButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         sequence = new ArrayList<>();
         pin = getIntent().getStringExtra("pin");
+        backspaceButton = findViewById(R.id.backspace_btn);
 
         images = new ImageView[9];
         images[0] = findViewById(R.id.image0);
@@ -75,6 +78,17 @@ public class PasswordPickerActivity extends AppCompatActivity {
     public void onImageClick(View v) {
         v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
         sequence.add(String.valueOf(v.getTag()));
+        backspaceButton.setVisibility(View.VISIBLE);
+
+    }
+
+    public void onBackspace(View v) {
+        if (sequence.size() > 0) {
+            v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
+            sequence.remove(sequence.size() - 1);
+        } else {
+            v.setVisibility(View.INVISIBLE);
+        }
     }
 
     private int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
@@ -96,6 +110,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
             Toast.makeText(this, "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
         }
         sequence.clear();
+        backspaceButton.setVisibility(View.INVISIBLE);
     }
 
     private String generatePassword(String toEncode, String key) {
