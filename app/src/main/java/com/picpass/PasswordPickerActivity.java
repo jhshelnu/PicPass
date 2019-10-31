@@ -33,8 +33,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private ImageView[] images;
     private ArrayList<String> sequence;
     private Button backspaceButton;
-    private RelativeLayout countView;
-    private TextView countText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         sequence = new ArrayList<>();
         pin = getIntent().getStringExtra("pin");
         backspaceButton = findViewById(R.id.backspace_btn);
-        countView = findViewById(R.id.count_view);
-        countText = findViewById(R.id.count_text);
 
         images = new ImageView[9];
         images[0] = findViewById(R.id.image0);
@@ -85,19 +81,15 @@ public class PasswordPickerActivity extends AppCompatActivity {
         v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
         sequence.add(String.valueOf(v.getTag()));
         backspaceButton.setVisibility(View.VISIBLE);
-        countView.setVisibility(View.VISIBLE);
-        countText.setText(String.valueOf(sequence.size()));
     }
 
     public void onBackspace(View v) {
         if (sequence.size() > 0) {
             sequence.remove(sequence.size() - 1);
-            countText.setText(String.valueOf(sequence.size()));
         }
 
         if (sequence.size() == 0) {
             backspaceButton.setVisibility(View.INVISIBLE);
-            countView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -122,7 +114,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         sequence.clear();
         backspaceButton.setVisibility(View.INVISIBLE);
-        countView.setVisibility(View.INVISIBLE);
     }
 
     private String generatePassword(String toEncode, String key) {
