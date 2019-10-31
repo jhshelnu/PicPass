@@ -79,7 +79,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
         sequence.add(String.valueOf(v.getTag()));
         backspaceButton.setVisibility(View.VISIBLE);
-
     }
 
     public void onBackspace(View v) {
