@@ -85,7 +85,9 @@ public class PasswordPickerActivity extends AppCompatActivity {
         if (sequence.size() > 0) {
             v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
             sequence.remove(sequence.size() - 1);
-        } else {
+        }
+
+        if (sequence.size() == 0) {
             v.setVisibility(View.INVISIBLE);
         }
     }
