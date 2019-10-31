@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -64,6 +65,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
             for (int i = 0; i < 9; i++) {
                 images[i].setImageResource(getDrawableIdFromString(imageNames[i]));
                 images[i].setTag(imageNames[i]);
+                //TODO: change onImageClick to be a touch listener. add programmatically here (setOnTouchListener)
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -71,6 +73,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     public void onImageClick(View v) {
+        v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
         sequence.add(String.valueOf(v.getTag()));
     }
 
