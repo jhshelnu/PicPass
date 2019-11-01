@@ -2,6 +2,8 @@ package com.picpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -26,6 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
+    private static final String CLIPBOARD_LABEL = "picpass_password";
     private static final int GENERATED_PASSWORD_LENGTH = 30; /* /!\ WARNING /!\: CHANGING THIS BREAKS EXISTING PASSWORDS!!!! */
     private static final int MINIMUM_LENGTH = 3;
 
@@ -107,14 +110,19 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
         if (generatedPassword != null) {
-            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, generatedPassword);
+//            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Generated password " + generatedPassword);
+
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
+
+            sequence.clear();
+            backspaceButton.setVisibility(View.INVISIBLE);
+
         } else {
             Toast.makeText(this, "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
         }
-
-        sequence.clear();
-        backspaceButton.setVisibility(View.INVISIBLE);
     }
 
     private String generatePassword(String toEncode, String key) {
