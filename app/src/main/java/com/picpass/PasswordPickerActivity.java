@@ -112,7 +112,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         if (generatedPassword != null) {
 //            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
             Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Generated password " + generatedPassword);
 
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
@@ -134,7 +133,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
             // "aA1!" guarantees the passwords have: lowercase, uppercase, number, symbol
             String encodedString = Base64.encodeToString(sha256_HMAC.doFinal(toEncode.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP | Base64.NO_PADDING | Base64.URL_SAFE);
-            return encodedString.substring(0, GENERATED_PASSWORD_LENGTH - 4).concat("aA1!");
+            return encodedString.substring(0, GENERATED_PASSWORD_LENGTH - 4).concat("aA1!").replace('-', '!').replace('_', '@');
         } catch (NoSuchAlgorithmException | InvalidKeyException e){
             Log.wtf(TAG, Log.getStackTraceString(e));
             return null;
