@@ -105,7 +105,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     public void onGeneratePassword(View v) {
         if (sequence.size() < MINIMUM_LENGTH) {
-            Toast.makeText(this, String.format(Locale.getDefault(), "You must select at least %d more %s.", MINIMUM_LENGTH - sequence.size(), (sequence.size() == 2 ? "image" : "images")), Toast.LENGTH_SHORT).show();
+            int imagesLeft = MINIMUM_LENGTH - sequence.size();
+            Toast.makeText(this,
+                    String.format(Locale.getDefault(), "You must select at least %d more %s.", imagesLeft, (imagesLeft == 1 ? "image" : "images")),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
