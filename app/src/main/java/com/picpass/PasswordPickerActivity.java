@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -104,7 +105,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     public void onGeneratePassword(View v) {
         if (sequence.size() < MINIMUM_LENGTH) {
-            Toast.makeText(this, getResources().getString(R.string.sequence_too_short), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.format(Locale.getDefault(), "You must select at least %d more %s.", MINIMUM_LENGTH - sequence.size(), (sequence.size() == 2 ? "image" : "images")), Toast.LENGTH_SHORT).show();
             return;
         }
 
