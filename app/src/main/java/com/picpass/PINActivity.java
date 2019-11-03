@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,21 +46,34 @@ public class PINActivity extends AppCompatActivity {
                 switch (currentPINText.length()) {
                     case 0:
                         bubble1.setImageResource(R.drawable.circle);
+                        bubble2.setImageResource(R.drawable.circle);
+                        bubble3.setImageResource(R.drawable.circle);
+                        bubble4.setImageResource(R.drawable.circle);
                         break;
                     case 1:
                         bubble1.setImageResource(R.drawable.circle_filled);
                         bubble2.setImageResource(R.drawable.circle);
+                        bubble3.setImageResource(R.drawable.circle);
+                        bubble4.setImageResource(R.drawable.circle);
                         break;
                     case 2:
+                        bubble1.setImageResource(R.drawable.circle_filled);
                         bubble2.setImageResource(R.drawable.circle_filled);
                         bubble3.setImageResource(R.drawable.circle);
+                        bubble4.setImageResource(R.drawable.circle);
                         break;
                     case 3:
+                        bubble1.setImageResource(R.drawable.circle_filled);
+                        bubble2.setImageResource(R.drawable.circle_filled);
                         bubble3.setImageResource(R.drawable.circle_filled);
                         bubble4.setImageResource(R.drawable.circle);
                         break;
                     case 4:
+                        bubble1.setImageResource(R.drawable.circle_filled);
+                        bubble2.setImageResource(R.drawable.circle_filled);
+                        bubble3.setImageResource(R.drawable.circle_filled);
                         bubble4.setImageResource(R.drawable.circle_filled);
+
                         Intent intent = new Intent(getApplicationContext(), PasswordPickerActivity.class);
                         intent.putExtra("pin", currentPINText.toString());
                         startActivity(intent);
@@ -72,5 +86,12 @@ public class PINActivity extends AppCompatActivity {
         pinTextField.requestFocus();
         pinTextField.callOnClick();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pinTextField.setText("");
+    }
+
 
 }

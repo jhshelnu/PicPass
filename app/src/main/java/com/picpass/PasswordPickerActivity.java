@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import javax.crypto.Mac;
@@ -30,13 +31,16 @@ import javax.crypto.spec.SecretKeySpec;
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
     private static final String CLIPBOARD_LABEL = "picpass_password";
-    private static final int GENERATED_PASSWORD_LENGTH = 30; /* /!\ WARNING /!\: CHANGING THIS BREAKS EXISTING PASSWORDS!!!! */
+    private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
     private static final int MINIMUM_LENGTH = 3;
+    private static final int TIMEOUT_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
 
     private String pin;
     private ImageView[] images;
     private ArrayList<String> sequence;
     private Button backspaceButton;
+
+    private Calendar inactivityStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,21 @@ public class PasswordPickerActivity extends AppCompatActivity {
                                 "beach", "sea", "iceberg"};
 
         initializeImages(imageNames);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
+        if (secondsInactive >= TIMEOUT_DURATION) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        inactivityStartTime = Calendar.getInstance();
     }
 
     private void initializeImages(String[] imageNames) {
