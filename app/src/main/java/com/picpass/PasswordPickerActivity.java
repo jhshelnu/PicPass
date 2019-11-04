@@ -95,8 +95,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
                 images[i].setTag(imageNames[i]);
                 //TODO: change onImageClick to be a touch listener. add programmatically here (setOnTouchListener)
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (ReflectiveOperationException e) {
+            Log.wtf(TAG, Log.getStackTraceString(e));
         }
     }
 
