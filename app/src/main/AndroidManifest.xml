@@ -10,10 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/PicPassTheme">
         <activity
-            android:name=".PasswordPickerActivity" />
+            android:name=".PasswordPickerActivity"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".PINActivity"
-            android:windowSoftInputMode="stateAlwaysVisible">
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
