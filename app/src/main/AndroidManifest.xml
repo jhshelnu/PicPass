@@ -11,11 +11,13 @@
         android:theme="@style/PicPassTheme">
         <activity
             android:name=".PasswordPickerActivity"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PINActivity"
             android:windowSoftInputMode="stateAlwaysVisible"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
