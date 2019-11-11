@@ -31,9 +31,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
     private static final String CLIPBOARD_LABEL = "picpass_password";
+
     private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
-    private static final int MINIMUM_LENGTH = 3;
+    private static final int MINIMUM_LENGTH = 5;
     private static final int TIMEOUT_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
+    private static final int COOLDOWN_DURATION = 4; // number of seconds after password generation before another password generation is allowed
 
     private String pin;
     private ImageView[] images;
@@ -41,6 +43,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private Button backspaceButton;
 
     private Calendar inactivityStartTime;
+    private Calendar cooldownStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +126,16 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     public void onGeneratePassword(View v) {
+        // Don't generate a password if the user is on cooldown
+        if (cooldownStartTime != null) {
+            long remainingCooldownSeconds = COOLDOWN_DURATION - ((Calendar.getInstance().getTimeInMillis() - cooldownStartTime.getTimeInMillis()) / 1000);
+            if (remainingCooldownSeconds > 0) {
+                Toast.makeText(this, String.format(Locale.getDefault(), "You must wait another %d %s", remainingCooldownSeconds, remainingCooldownSeconds == 1 ? "second" : "seconds"), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Don't generate a password if the image sequence is too short
         if (sequence.size() < MINIMUM_LENGTH) {
             int imagesLeft = MINIMUM_LENGTH - sequence.size();
             Toast.makeText(this,
@@ -141,6 +154,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
             sequence.clear();
             backspaceButton.setVisibility(View.INVISIBLE);
+            cooldownStartTime = Calendar.getInstance(); // reset the cooldown start time
 
         } else {
             Toast.makeText(this, "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();

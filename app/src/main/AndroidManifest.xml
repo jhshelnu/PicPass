@@ -5,19 +5,20 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_picpass_cape"
-        android:roundIcon="@mipmap/ic_picpass_cape_round"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_picpass_cape_round"
         android:supportsRtl="true"
         android:theme="@style/PicPassTheme">
+        <activity android:name=".ImageGalleryActivity"></activity>
         <activity
             android:name=".PasswordPickerActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PINActivity"
-            android:windowSoftInputMode="stateAlwaysVisible"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
