@@ -12,12 +12,8 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +23,8 @@ import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import static com.picpass.Managers.ResourceManager.getDrawableIdFromString;
 
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
@@ -118,11 +116,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         if (sequence.size() == 0) {
             backspaceButton.setVisibility(View.INVISIBLE);
         }
-    }
-
-    private int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = R.drawable.class.getDeclaredField(resName);
-        return field.getInt(field);
     }
 
     public void onGeneratePassword(View v) {

@@ -76,7 +76,8 @@ public class PINActivity extends AppCompatActivity {
                         bubble3.setImageResource(R.drawable.circle_filled);
                         bubble4.setImageResource(R.drawable.circle_filled);
 
-                        Intent intent = new Intent(getApplicationContext(), PasswordPickerActivity.class);
+//                        Intent intent = new Intent(getApplicationContext(), PasswordPickerActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ImageGalleryActivity.class); // TEST
                         intent.putExtra("pin", currentPINText.toString());
                         startActivity(intent);
                         break;
