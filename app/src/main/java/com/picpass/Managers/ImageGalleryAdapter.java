@@ -24,8 +24,8 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
                                              "village", "waterfall", "waterfall2", "windmills"};
     private ArrayList<String> imageSet;
 
-    public ImageGalleryAdapter() {
-        imageSet = new ArrayList<>();
+    public ImageGalleryAdapter(ArrayList<String> imageSet) {
+        this.imageSet = imageSet;
     }
 
     @NonNull

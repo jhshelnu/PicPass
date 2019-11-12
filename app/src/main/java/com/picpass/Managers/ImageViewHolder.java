@@ -14,8 +14,9 @@ import com.picpass.R;
 
 import java.util.ArrayList;
 
+import static com.picpass.ImageGalleryActivity.REQUIRED_NUM_IMAGES;
+
 class ImageViewHolder extends RecyclerView.ViewHolder {
-    private static final int REQUIRED_NUM_IMAGES = 9;
     private static Animation animation;
 
     ImageView image;
@@ -42,9 +43,6 @@ class ImageViewHolder extends RecyclerView.ViewHolder {
                     // Select image
                     checked.setVisibility(View.VISIBLE);
                     imageSet.add(image.getTag().toString());
-                } else {
-                    // Too many images already selected
-                    Toast.makeText(image.getContext(), "You may not choose more than " + REQUIRED_NUM_IMAGES + " images", Toast.LENGTH_SHORT).show();
                 }
             }
         });

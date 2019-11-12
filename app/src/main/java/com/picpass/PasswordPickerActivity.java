@@ -63,11 +63,11 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-        String[] imageNames = {"river", "castle", "cape",
-                                "bridge", "fields", "mill",
-                                "beach", "sea", "iceberg"};
+//        String[] imageNames = {"river", "castle", "cape",
+//                                "bridge", "fields", "mill",
+//                                "beach", "sea", "iceberg"};
 
-        initializeImages(imageNames);
+        initializeImages(getIntent().getStringArrayExtra("images"));
     }
 
     @Override
