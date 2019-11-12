@@ -124,6 +124,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
             long remainingCooldownSeconds = COOLDOWN_DURATION - ((Calendar.getInstance().getTimeInMillis() - cooldownStartTime.getTimeInMillis()) / 1000);
             if (remainingCooldownSeconds > 0) {
                 Toast.makeText(this, String.format(Locale.getDefault(), "You must wait another %d %s", remainingCooldownSeconds, remainingCooldownSeconds == 1 ? "second" : "seconds"), Toast.LENGTH_SHORT).show();
+                sequence.clear();
                 return;
             }
         }
