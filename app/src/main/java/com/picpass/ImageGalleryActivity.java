@@ -17,13 +17,17 @@ import com.picpass.Managers.ResourceManager;
 
 import java.util.Locale;
 
+/**
+ * ImageGalleryActivity allows the user to customize their image set for generating passwords.
+ *
+ * @author John Shelnutt, Jackson Gregory
+ */
 public class ImageGalleryActivity extends AppCompatActivity {
     public static final int REQUIRED_NUM_IMAGES = 9;
 
-    RecyclerView galleryView;
-    ObservableArrayList<String> images;
-    TextView numSelected;
-    Button submitButton;
+    private ObservableArrayList<String> selectedImages;
+    private TextView numSelected;
+    private Button submitButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +37,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
         submitButton = findViewById(R.id.btn_submit);
         numSelected = findViewById(R.id.num_selected);
 
-        images = new ObservableArrayList<>();
-        images.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableArrayList<String>>() {
+        // When the adapter modifies the arraylist of selectedImages, this activity gets notified via the following callbacks (used to update UI)
+        selectedImages = new ObservableArrayList<>();
+        selectedImages.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableArrayList<String>>() {
             @Override
             public void onItemRangeInserted(ObservableArrayList<String> sender, int positionStart, int itemCount) {
                 updateUI();
@@ -53,31 +58,41 @@ public class ImageGalleryActivity extends AppCompatActivity {
             public void onItemRangeMoved(ObservableArrayList<String> sender, int fromPosition, int toPosition, int itemCount) { }
         });
 
-        ImageGalleryAdapter adapter = new ImageGalleryAdapter(images);
-        galleryView = findViewById(R.id.gallery_recycler_view);
-        galleryView.setLayoutManager(new GridLayoutManager(this, 3));
+        // Initialize the gallery recycler view
+        RecyclerView galleryView = findViewById(R.id.gallery_recycler_view);
+        galleryView.setLayoutManager(new GridLayoutManager(this, 3)); // number of columns
+
+        // Set the adapter for the gallery recycler view (passes an empty observable arraylist for the adapter to populate with selected images)
+        final ImageGalleryAdapter adapter = new ImageGalleryAdapter(selectedImages);
         galleryView.setAdapter(adapter);
 
         updateUI();
     }
 
-
+    /**
+     * Updates the display to show the current number of images selected and the submit button if appropriate
+     */
     public void updateUI() {
-        numSelected.setText(String.format(Locale.getDefault(), "%d/%d", images.size(), REQUIRED_NUM_IMAGES));
+        numSelected.setText(String.format(Locale.getDefault(), "%d/%d", selectedImages.size(), REQUIRED_NUM_IMAGES));
 
-        if (images.size() == 9) {
+        if (selectedImages.size() == 9) {
             submitButton.setVisibility(View.VISIBLE);
         } else {
             submitButton.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Stores the current selected images to the PicPass configuration file
+     * Passes the selected images along with the PIN to the PasswordPickerActivity
+     * @param v The view (unused, but required for the callback)
+     */
     public void onSubmit(View v) {
-        String pin = getIntent().getStringExtra("pin");
-        String[] imageSet = images.toArray(new String[0]); // convert ArrayList<String> to String[]
+        final String pin = getIntent().getStringExtra("pin");
+        final String[] imageSet = selectedImages.toArray(new String[0]); // convert ArrayList<String> to String[]
         ResourceManager.saveImageSet(this, imageSet);
 
-        Intent intent = new Intent(this, PasswordPickerActivity.class);
+        final Intent intent = new Intent(this, PasswordPickerActivity.class);
         intent.putExtra("imageSet", imageSet);
         intent.putExtra("pin", pin);
 
