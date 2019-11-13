@@ -125,6 +125,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
             if (remainingCooldownSeconds > 0) {
                 Toast.makeText(this, String.format(Locale.getDefault(), "You must wait another %d %s", remainingCooldownSeconds, remainingCooldownSeconds == 1 ? "second" : "seconds"), Toast.LENGTH_SHORT).show();
                 sequence.clear();
+                backspaceButton.setVisibility(View.INVISIBLE);
                 return;
             }
         }
