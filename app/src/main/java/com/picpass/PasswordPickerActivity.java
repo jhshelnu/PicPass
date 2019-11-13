@@ -26,6 +26,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static com.picpass.Managers.ResourceManager.getDrawableIdFromString;
 
+/**
+ * PasswordPickerActivity is responsible for generating passwords based on image selection input.
+ * @author John Shelnutt, Jackson Gregory
+ */
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
     private static final String CLIPBOARD_LABEL = "picpass_password";
@@ -63,10 +67,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-//        String[] imageNames = {"river", "castle", "cape",
-//                                "bridge", "fields", "mill",
-//                                "beach", "sea", "iceberg"};
-
         initializeImages(getIntent().getStringArrayExtra("imageSet"));
     }
 
@@ -85,6 +85,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
         inactivityStartTime = Calendar.getInstance();
     }
 
+    /**
+     * This method binds the image name and resource to the 9 image views.
+     * @param imageNames the names of all the images to display
+     */
     private void initializeImages(String[] imageNames) {
         if (imageNames == null || imageNames.length != 9) {
             throw new IllegalArgumentException("imageNames array must non-null and of size 9!");
@@ -94,7 +98,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
             for (int i = 0; i < 9; i++) {
                 images[i].setImageResource(getDrawableIdFromString(imageNames[i]));
                 images[i].setTag(imageNames[i]);
-                //TODO: change onImageClick to be a touch listener. add programmatically here (setOnTouchListener)
             }
         } catch (ReflectiveOperationException e) {
             Log.wtf(TAG, Log.getStackTraceString(e));
@@ -118,6 +121,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a secure password and copies it to the clipboard.
+     * @param v View passed from onClick (unused)
+     */
     public void onGeneratePassword(View v) {
         // Don't generate a password if the user is on cooldown
         if (cooldownStartTime != null) {
@@ -156,6 +163,13 @@ public class PasswordPickerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles the actual password generation using sha-256, the sequence of images, and the PIN.
+     * @param toEncode the string to encode. toEncode will be the concatenation of tapped image's names smushed into one string.
+     * @param key The key for sha-256. key will be the PIN.
+     * @return a 30 character long password containing at least one of each: lowercase and uppercase letter, a number, and a symbol
+     * or null, if the encryption process fails.
+     */
     private String generatePassword(String toEncode, String key) {
         try {
             String algorithm = "HmacSHA256";
