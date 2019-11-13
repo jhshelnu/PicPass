@@ -9,11 +9,17 @@
         android:roundIcon="@mipmap/ic_picpass_cape_round"
         android:supportsRtl="true"
         android:theme="@style/PicPassTheme">
-        <activity android:name=".ImageGalleryActivity"></activity>
+
+        <activity
+            android:name=".ImageGalleryActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".PasswordPickerActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".PINActivity"
             android:launchMode="singleTop"
@@ -26,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

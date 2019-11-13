@@ -20,12 +20,12 @@ class ImageViewHolder extends RecyclerView.ViewHolder {
     private static Animation animation;
 
     ImageView image;
-    CheckBox checked;
+    ImageView checked;
 
     ImageViewHolder(final ArrayList<String> imageSet, @NonNull View itemView) {
         super(itemView);
         image = itemView.findViewById(R.id.gallery_image);
-        checked = itemView.findViewById(R.id.check_box);
+        checked = itemView.findViewById(R.id.checked_indicator);
 
         if (animation == null) {
             animation =  AnimationUtils.loadAnimation(itemView.getContext(), R.anim.image_click);

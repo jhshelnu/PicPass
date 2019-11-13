@@ -11,10 +11,11 @@
         android:id="@+id/choose_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="Choose your image set"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/colorLightBlue"
-        android:textSize="25sp"
+        android:textSize="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,9 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="18dp"
         app:cardBackgroundColor="#444444"
         app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toTopOf="@+id/num_selected"
@@ -45,9 +46,9 @@
         android:id="@+id/num_selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="18dp"
         android:textColor="@color/colorLightBlue"
-        android:textSize="35sp"
+        android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -56,13 +57,13 @@
         android:id="@+id/btn_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_button"
+        android:onClick="onSubmit"
         android:text="Go!"
         android:textColor="#ffffff"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/cardView"
-        android:onClick="onSubmit"/>
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
