@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.picpass.Managers.ImageGalleryAdapter;
+import com.picpass.Managers.ResourceManager;
 
 import java.util.Locale;
 
@@ -20,7 +21,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
     public static final int REQUIRED_NUM_IMAGES = 9;
 
     RecyclerView galleryView;
-    ObservableArrayList<String> imageSet;
+    ObservableArrayList<String> images;
     TextView numSelected;
     Button submitButton;
 
@@ -32,8 +33,8 @@ public class ImageGalleryActivity extends AppCompatActivity {
         submitButton = findViewById(R.id.btn_submit);
         numSelected = findViewById(R.id.num_selected);
 
-        imageSet = new ObservableArrayList<>();
-        imageSet.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableArrayList<String>>() {
+        images = new ObservableArrayList<>();
+        images.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableArrayList<String>>() {
             @Override
             public void onItemRangeInserted(ObservableArrayList<String> sender, int positionStart, int itemCount) {
                 updateUI();
@@ -52,7 +53,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
             public void onItemRangeMoved(ObservableArrayList<String> sender, int fromPosition, int toPosition, int itemCount) { }
         });
 
-        ImageGalleryAdapter adapter = new ImageGalleryAdapter(imageSet);
+        ImageGalleryAdapter adapter = new ImageGalleryAdapter(images);
         galleryView = findViewById(R.id.gallery_recycler_view);
         galleryView.setLayoutManager(new GridLayoutManager(this, 3));
         galleryView.setAdapter(adapter);
@@ -62,9 +63,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
 
     public void updateUI() {
-        numSelected.setText(String.format(Locale.getDefault(), "%d/%d", imageSet.size(), REQUIRED_NUM_IMAGES));
+        numSelected.setText(String.format(Locale.getDefault(), "%d/%d", images.size(), REQUIRED_NUM_IMAGES));
 
-        if (imageSet.size() == 9) {
+        if (images.size() == 9) {
             submitButton.setVisibility(View.VISIBLE);
         } else {
             submitButton.setVisibility(View.GONE);
@@ -73,10 +74,13 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     public void onSubmit(View v) {
         String pin = getIntent().getStringExtra("pin");
+        String[] imageSet = images.toArray(new String[0]); // convert ArrayList<String> to String[]
+        ResourceManager.saveImageSet(this, imageSet);
 
         Intent intent = new Intent(this, PasswordPickerActivity.class);
-        intent.putExtra("images", imageSet.toArray(new String[0])); // convert ArrayList<String> to String[]
+        intent.putExtra("imageSet", imageSet);
         intent.putExtra("pin", pin);
+
         finish();
         startActivity(intent);
     }

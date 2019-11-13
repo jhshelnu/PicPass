@@ -67,7 +67,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 //                                "bridge", "fields", "mill",
 //                                "beach", "sea", "iceberg"};
 
-        initializeImages(getIntent().getStringArrayExtra("images"));
+        initializeImages(getIntent().getStringArrayExtra("imageSet"));
     }
 
     @Override
@@ -86,8 +86,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     private void initializeImages(String[] imageNames) {
-        if (imageNames.length != 9) {
-            throw new IllegalArgumentException("imageNames array must be of size 9!");
+        if (imageNames == null || imageNames.length != 9) {
+            throw new IllegalArgumentException("imageNames array must non-null and of size 9!");
         }
 
         try {

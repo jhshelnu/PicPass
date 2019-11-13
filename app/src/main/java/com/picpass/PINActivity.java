@@ -13,6 +13,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.picpass.Managers.ResourceManager;
+
 public class PINActivity extends AppCompatActivity {
     private static final String TAG = "PINActivity";
 
@@ -28,21 +30,10 @@ public class PINActivity extends AppCompatActivity {
         bubble2 = findViewById(R.id.bubble2);
         bubble3 = findViewById(R.id.bubble3);
         bubble4 = findViewById(R.id.bubble4);
-
         pinTextField = findViewById(R.id.pin_text);
 
         // Define the actions to take when the pin text field changes
         pinTextField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
             @Override
             public void afterTextChanged(Editable currentPINText) {
                 switch (currentPINText.length()) {
@@ -76,18 +67,19 @@ public class PINActivity extends AppCompatActivity {
                         bubble3.setImageResource(R.drawable.circle_filled);
                         bubble4.setImageResource(R.drawable.circle_filled);
 
-//                        Intent intent = new Intent(getApplicationContext(), PasswordPickerActivity.class);
-                        Intent intent = new Intent(getApplicationContext(), ImageGalleryActivity.class); // TEST
-                        intent.putExtra("pin", currentPINText.toString());
-                        startActivity(intent);
+                        onPINEntered();
                         break;
                 }
             }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
         });
 
-        ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(pinTextField, InputMethodManager.SHOW_FORCED);
-        pinTextField.requestFocus();
-        pinTextField.callOnClick();
+        onShowKeyboard(null);
     }
 
     @Override
@@ -100,6 +92,24 @@ public class PINActivity extends AppCompatActivity {
         pinTextField.requestFocus();
         InputMethodManager keyboardManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         keyboardManager.showSoftInput(pinTextField, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void onPINEntered() {
+        String[] imageSet = ResourceManager.loadImageSet(this);
+        Intent intent;
+
+        // First time using the app, no config file exists
+        if (imageSet == null) {
+            intent = new Intent(this, ImageGalleryActivity.class);
+        } else {
+            // Not the first time using the app - config file exists and we go straight to the password picker activity
+            intent = new Intent(this, PasswordPickerActivity.class);
+            intent.putExtra("imageSet", imageSet);
+        }
+
+        // PIN needs to be passed either way, as the end result will be to get to the PasswordPickerActivity eventually
+        intent.putExtra("pin", pinTextField.getText().toString());
+        startActivity(intent);
     }
 
 }
