@@ -16,6 +16,7 @@ import com.picpass.Managers.ImageGalleryAdapter;
 import com.picpass.Managers.ResourceManager;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -29,9 +30,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private ObservableArrayList<String> selectedImages;
     private TextView numSelected;
     private Button submitButton;
-
-    private boolean editMode; // indicates if this activity should return the images to the PasswordPicker (editing)
-                              // or launch the PasswordPicker afterwards (not editing, only happens once on the first launch)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +60,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
             public void onItemRangeMoved(ObservableArrayList<String> sender, int fromPosition, int toPosition, int itemCount) { }
         });
 
-        // Pre-populate with current images if applicable
-        String[] currentImages = getIntent().getStringArrayExtra("currentImages");
-        if (currentImages != null) {
-            editMode = true;
-            selectedImages.addAll(Arrays.asList(currentImages));
-        }
+        // Pre-populate with current images
+        List<String> currentImages = Arrays.asList(getIntent().getStringArrayExtra("currentImages"));
+        selectedImages.addAll(currentImages);
 
         // Initialize the gallery recycler view
         RecyclerView galleryView = findViewById(R.id.gallery_recycler_view);
@@ -99,18 +94,8 @@ public class ImageGalleryActivity extends AppCompatActivity {
      * @param v The view (unused, but required for the callback)
      */
     public void onSubmit(View v) {
-        final String[] imageSet = selectedImages.toArray(new String[0]); // convert ArrayList<String> to String[]
-        ResourceManager.saveImageSet(this, imageSet);
-
-        if (editMode) {
-            setResult(RESULT_OK, (new Intent()).putExtra("newImages", imageSet));
-            finish();
-        } else {
-            final Intent intent = new Intent(this, PasswordPickerActivity.class);
-            intent.putExtra("imageSet", imageSet);
-            intent.putExtra("pin", getIntent().getStringExtra("pin"));
-            finish();
-            startActivity(intent);
-        }
+        ResourceManager.saveImageSet(this, selectedImages);
+        setResult(RESULT_OK, (new Intent()).putExtra("newImages", selectedImages.toArray(new String[0])));
+        finish();
     }
 }

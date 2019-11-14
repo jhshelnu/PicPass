@@ -95,21 +95,8 @@ public class PINActivity extends AppCompatActivity {
     }
 
     private void onPINEntered() {
-        String[] imageSet = ResourceManager.loadImageSet(this);
-        Intent intent;
-
-        // First time using the app, no config file exists
-        if (imageSet == null) {
-            intent = new Intent(this, ImageGalleryActivity.class);
-        } else {
-            // Not the first time using the app - config file exists and we go straight to the password picker activity
-            intent = new Intent(this, PasswordPickerActivity.class);
-            intent.putExtra("imageSet", imageSet);
-        }
-
-        // PIN needs to be passed either way, as the end result will be to get to the PasswordPickerActivity eventually
+        Intent intent = new Intent(this, PasswordPickerActivity.class);
         intent.putExtra("pin", pinTextField.getText().toString());
         startActivity(intent);
     }
-
 }

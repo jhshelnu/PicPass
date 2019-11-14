@@ -17,11 +17,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.picpass.Managers.ResourceManager;
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import javax.crypto.Mac;
@@ -45,7 +50,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     private String pin;
     private ImageView[] images;
-    private String[] imageNames;
+    private List<String> imageNames;
     private ArrayList<String> sequence;
     private Button backspaceButton;
     private Animation animation;
@@ -74,7 +79,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-        imageNames = getIntent().getStringArrayExtra("imageSet");
+        imageNames = ResourceManager.loadImageSet(this);
         initializeImages(imageNames);
     }
 
@@ -97,15 +102,17 @@ public class PasswordPickerActivity extends AppCompatActivity {
      * This method binds the image name and resource to the 9 image views.
      * @param imageNames the names of all the images to display
      */
-    private void initializeImages(String[] imageNames) {
-        if (imageNames == null || imageNames.length != 9) {
+    private void initializeImages(List<String> imageNames) {
+        if (imageNames == null || imageNames.size() != 9) {
             throw new IllegalArgumentException("imageNames array must non-null and of size 9!");
         }
 
+        Collections.shuffle(imageNames);
+
         try {
             for (int i = 0; i < 9; i++) {
-                images[i].setImageResource(getDrawableIdFromString(imageNames[i]));
-                images[i].setTag(imageNames[i]);
+                images[i].setImageResource(getDrawableIdFromString(imageNames.get(i)));
+                images[i].setTag(imageNames.get(i));
             }
         } catch (ReflectiveOperationException e) {
             Log.wtf(TAG, Log.getStackTraceString(e));
@@ -134,7 +141,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
         backspaceButton.setVisibility(View.INVISIBLE);
 
         Intent intent = new Intent(this, ImageGalleryActivity.class);
-        intent.putExtra("currentImages", imageNames);
+        intent.putExtra("currentImages", imageNames.toArray(new String[0]));
         startActivityForResult(intent, MODIFY_IMAGE_SET_REQUEST_CODE);
     }
 
@@ -142,7 +149,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MODIFY_IMAGE_SET_REQUEST_CODE && resultCode == RESULT_OK) {
-            initializeImages(data.getStringArrayExtra("newImages"));
+            imageNames = Arrays.asList(data.getStringArrayExtra("newImages"));
+            initializeImages(imageNames);
         }
     }
 

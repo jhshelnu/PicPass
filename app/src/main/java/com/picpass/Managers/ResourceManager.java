@@ -21,6 +21,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Resource Manager is a helper class that allows PicPass to call various helper methods from any activity.
@@ -33,16 +37,38 @@ public class ResourceManager {
     private static final String FILENAME = "picpass_cfg.json";
     private static final String IMAGE_SET = "imageSet";
 
+    // Complete set of PicPass Images. To add more, drag .png files to res/drawable and add the filename here.
+    // Can be public because the list is unmodifiable and declared as final.
+    public static final List<String> galleryImages = Collections.unmodifiableList(Arrays.asList(
+            "beach", "bridge", "cape", "castle", "cityscape", "desert",
+            "desert2", "fields", "fields2", "forest", "hills", "home",
+            "home2", "iceberg", "island", "mill", "mountains", "mountains2",
+            "nuclearplant", "river", "ruins", "sea", "spruce", "trees",
+            "village", "waterfall", "waterfall2", "windmills"));
+
     /**
-     * Gets the android auto-generated resource id given the string name of the resource. Ex. "boat" returns R.id.boat or throws.
-     * @param resName The string resource name for which the generated ID needs to be retrieved.
-     * @return The associated ID for the resource specified by resName
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * Determines if PicPass should display tutorial dialogs, by determining if this is the first time the app is being run
+     * If the config file does not exist, tutorial dialogs will show and 9 images will be chosen at random for the user
+     * @param ctx The context of the invoking Activity, used to locate the config file.
+     * @return
      */
-    public static int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = R.drawable.class.getDeclaredField(resName);
-        return field.getInt(field);
+    public static boolean shouldDoTutorial(Context ctx) {
+        File configFile = new File(ctx.getFilesDir(), FILENAME);
+        return !configFile.exists();
+    }
+
+    public static void initConfig(Context ctx) {
+        try {
+            List<String> randomImageSet = new ArrayList<>(galleryImages);
+            Collections.shuffle(randomImageSet);
+            randomImageSet = randomImageSet.subList(0, 9);
+
+            JSONObject contents = new JSONObject();
+            contents.put(IMAGE_SET, new JSONArray(randomImageSet));
+            saveConfigFileContents(ctx, contents);
+        } catch (JSONException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
     /**
@@ -50,7 +76,7 @@ public class ResourceManager {
      * @param ctx The context (needed to retrieve storage directory)
      * @param imageSet An array of Strings, corresponding to image names chosen by the user.
      */
-    public static void saveImageSet(Context ctx, String[] imageSet) {
+    public static void saveImageSet(Context ctx, List<String> imageSet) {
         JSONObject config = loadConfigFileContents(ctx);
         if (config != null) {
             try {
@@ -65,9 +91,9 @@ public class ResourceManager {
     /**
      * loadImageSet retrieves from persistent storage (the PicPass config file) the array of image names
      * @param ctx The context of the Activity requesting the image set, used to access the file.
-     * @return an array of image names, representing the saved imageSet chosen by the user, or null if the file or json array does not exist
+     * @return a list of image names, representing the saved imageSet chosen by the user, or null if the file or json array does not exist
      */
-    public static String[] loadImageSet(Context ctx) {
+    public static List<String> loadImageSet(Context ctx) {
         JSONObject config = loadConfigFileContents(ctx);
         if (config == null) {
             return null;
@@ -78,12 +104,11 @@ public class ResourceManager {
             return null;
         }
 
-        String[] imageSet = new String[imageSetJSONArray.length()];
-        for (int i = 0; i < imageSet.length; i++) {
-            imageSet[i] = imageSetJSONArray.optString(i);
+        ArrayList<String> imageSet = new ArrayList<>();
+        for (int i = 0; i < imageSetJSONArray.length(); i++) {
+            imageSet.add(imageSetJSONArray.optString(i));
         }
         return imageSet;
-
     }
 
     /**
@@ -97,7 +122,7 @@ public class ResourceManager {
         try {
             File configFile = new File(ctx.getFilesDir(), FILENAME);
             if (!configFile.exists()) {
-                saveConfigFileContents(ctx, new JSONObject());
+                initConfig(ctx);
             }
 
             BufferedReader reader = new BufferedReader(new FileReader(configFile));
@@ -128,5 +153,17 @@ public class ResourceManager {
         } catch (IOException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
+    }
+
+    /**
+     * Gets the android auto-generated resource id given the string name of the resource. Ex. "boat" returns R.id.boat or throws.
+     * @param resName The string resource name for which the generated ID needs to be retrieved.
+     * @return The associated ID for the resource specified by resName
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    public static int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
+        Field field = R.drawable.class.getDeclaredField(resName);
+        return field.getInt(field);
     }
 }

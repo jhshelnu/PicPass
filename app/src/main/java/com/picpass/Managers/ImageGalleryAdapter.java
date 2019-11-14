@@ -15,13 +15,6 @@ import java.util.ArrayList;
 
 public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
     private static final String TAG = "ImageGalleryAdapter";
-
-    // Complete set of PicPass Images. To add more, drag .png files to res/drawable and add the filename to this array.
-    private static final String[] gallery = {"beach", "bridge", "cape", "castle", "cityscape", "desert",
-                                             "desert2", "fields", "fields2", "forest", "hills", "home",
-                                             "home2", "iceberg", "island", "mill", "mountains", "mountains2",
-                                             "nuclearplant", "river", "ruins", "sea", "spruce", "trees",
-                                             "village", "waterfall", "waterfall2", "windmills"};
     private ArrayList<String> imageSet;
 
     public ImageGalleryAdapter(ArrayList<String> imageSet) {
@@ -37,7 +30,7 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        String imageName = gallery[position];
+        String imageName = ResourceManager.galleryImages.get(position);
         holder.image.setTag(imageName);
 
         if (imageSet.contains(imageName)) {
@@ -55,6 +48,6 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
 
     @Override
     public int getItemCount() {
-        return gallery.length;
+        return ResourceManager.galleryImages.size();
     }
 }
