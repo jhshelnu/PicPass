@@ -85,7 +85,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Welcome to PicPass!")
                     .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
-                            "The images will be shuffled around each time, so make sure you remember which images you use.\n\n" +
                             "To customize your images, click the gallery icon in the top-left corner.\n"))
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
@@ -122,8 +121,6 @@ public class PasswordPickerActivity extends AppCompatActivity {
         if (imageNames == null || imageNames.size() != 9) {
             throw new IllegalArgumentException("imageNames array must non-null and of size 9!");
         }
-
-        Collections.shuffle(imageNames);
 
         try {
             for (int i = 0; i < 9; i++) {
@@ -197,8 +194,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
         if (generatedPassword != null) {
-//            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
 
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
