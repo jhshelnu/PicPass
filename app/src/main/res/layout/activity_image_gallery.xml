@@ -37,7 +37,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:scrollbarSize="5dp"
+            android:scrollbarStyle="insideInset"
+            android:fadeScrollbars="false"
+            android:scrollbarThumbVertical="@color/colorBlue"/>
 
     </androidx.cardview.widget.CardView>
 

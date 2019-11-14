@@ -1,14 +1,17 @@
 package com.picpass;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +36,7 @@ import static com.picpass.Managers.ResourceManager.getDrawableIdFromString;
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
     private static final String CLIPBOARD_LABEL = "picpass_password";
+    private static final int MODIFY_IMAGE_SET_REQUEST_CODE = 0;
 
     private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
     private static final int MINIMUM_LENGTH = 5;
@@ -41,8 +45,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     private String pin;
     private ImageView[] images;
+    private String[] imageNames;
     private ArrayList<String> sequence;
     private Button backspaceButton;
+    private Animation animation;
 
     private Calendar inactivityStartTime;
     private Calendar cooldownStartTime;
@@ -55,6 +61,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
         sequence = new ArrayList<>();
         pin = getIntent().getStringExtra("pin");
         backspaceButton = findViewById(R.id.backspace_btn);
+        animation = AnimationUtils.loadAnimation(this, R.anim.image_click);
 
         images = new ImageView[9];
         images[0] = findViewById(R.id.image0);
@@ -67,7 +74,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-        initializeImages(getIntent().getStringArrayExtra("imageSet"));
+        imageNames = getIntent().getStringArrayExtra("imageSet");
+        initializeImages(imageNames);
     }
 
     @Override
@@ -105,19 +113,36 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     public void onImageClick(View v) {
-        v.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
+        v.startAnimation(animation);
         sequence.add(String.valueOf(v.getTag()));
         backspaceButton.setVisibility(View.VISIBLE);
     }
 
     public void onBackspace(View v) {
         if (sequence.size() > 0) {
-            backspaceButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.image_click));
+            backspaceButton.startAnimation(animation);
             sequence.remove(sequence.size() - 1);
         }
 
         if (sequence.size() == 0) {
             backspaceButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void onLaunchGallery(View v) {
+        sequence.clear();
+        backspaceButton.setVisibility(View.INVISIBLE);
+
+        Intent intent = new Intent(this, ImageGalleryActivity.class);
+        intent.putExtra("currentImages", imageNames);
+        startActivityForResult(intent, MODIFY_IMAGE_SET_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MODIFY_IMAGE_SET_REQUEST_CODE && resultCode == RESULT_OK) {
+            initializeImages(data.getStringArrayExtra("newImages"));
         }
     }
 
