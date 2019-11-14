@@ -50,15 +50,23 @@ public class ResourceManager {
      * Determines if PicPass should display tutorial dialogs, by determining if this is the first time the app is being run
      * If the config file does not exist, tutorial dialogs will show and 9 images will be chosen at random for the user
      * @param ctx The context of the invoking Activity, used to locate the config file.
-     * @return
+     * @return true if the invoking activity should run in tutorial mode (display pop-ups, walkthroughs, etc)
      */
     public static boolean shouldDoTutorial(Context ctx) {
         File configFile = new File(ctx.getFilesDir(), FILENAME);
         return !configFile.exists();
     }
 
-    public static void initConfig(Context ctx) {
+    /**
+     * On attempting to load or save data, but the config file does not yet exist,
+     * this helper function will be called to populate the config file with a random set of 9 images
+     * @param ctx The context of the invoking Activity, used to locate the config file.
+     */
+    private static void initConfig(Context ctx) {
         try {
+            File configFile = new File(ctx.getFilesDir(), FILENAME);
+            configFile.createNewFile();
+
             List<String> randomImageSet = new ArrayList<>(galleryImages);
             Collections.shuffle(randomImageSet);
             randomImageSet = randomImageSet.subList(0, 9);
@@ -66,7 +74,7 @@ public class ResourceManager {
             JSONObject contents = new JSONObject();
             contents.put(IMAGE_SET, new JSONArray(randomImageSet));
             saveConfigFileContents(ctx, contents);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
     }
@@ -146,6 +154,14 @@ public class ResourceManager {
      * @param config THe JSONObject representing the configuration
      */
     private static void saveConfigFileContents(Context ctx, JSONObject config) {
+
+
+
+        File configFile = new File(ctx.getFilesDir(), FILENAME);
+        if (!configFile.exists()) {
+            initConfig(ctx);
+        }
+
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(ctx.getFilesDir(), FILENAME)));
             writer.write(config.toString());

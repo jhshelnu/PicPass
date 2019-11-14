@@ -13,8 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.picpass.Managers.ResourceManager;
-
 public class PINActivity extends AppCompatActivity {
     private static final String TAG = "PINActivity";
 

@@ -94,8 +94,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
      * @param v The view (unused, but required for the callback)
      */
     public void onSubmit(View v) {
-        ResourceManager.saveImageSet(this, selectedImages);
-        setResult(RESULT_OK, (new Intent()).putExtra("newImages", selectedImages.toArray(new String[0])));
-        finish();
+        if (selectedImages.size() == 9) {
+            ResourceManager.saveImageSet(this, selectedImages);
+            setResult(RESULT_OK, (new Intent()).putExtra("newImages", selectedImages.toArray(new String[0])));
+            finish();
+        }
     }
 }
