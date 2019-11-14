@@ -85,7 +85,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Welcome to PicPass!")
                     .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
-                            "To customize your images, click the gallery icon in the top-left corner."))
+                            "The images will be shuffled around each time, so make sure you remember which images you use.\n\n" +
+                            "To customize your images, click the gallery icon in the top-left corner.\n"))
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) { }

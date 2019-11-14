@@ -55,6 +55,7 @@ public class ResourceManager {
     public static boolean shouldDoTutorial(Context ctx) {
         File configFile = new File(ctx.getFilesDir(), FILENAME);
         return !configFile.exists();
+//        return true;
     }
 
     /**
