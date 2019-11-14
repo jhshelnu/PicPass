@@ -1,10 +1,12 @@
 package com.picpass;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -78,6 +80,19 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[6] = findViewById(R.id.image6);
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
+
+        if (getIntent().getBooleanExtra("tutorialMode", false)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Welcome to PicPass!")
+                    .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
+                            "To customize your images, click the gallery icon in the top-left corner."))
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) { }
+                    })
+                    .setIcon(R.drawable.cape)
+                    .show();
+        }
 
         imageNames = ResourceManager.loadImageSet(this);
         initializeImages(imageNames);

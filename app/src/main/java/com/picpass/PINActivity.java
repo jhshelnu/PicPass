@@ -1,8 +1,10 @@
 package com.picpass;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,11 +15,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.picpass.Managers.ResourceManager;
+
 public class PINActivity extends AppCompatActivity {
     private static final String TAG = "PINActivity";
 
     ImageView bubble1, bubble2, bubble3, bubble4; // The 4 PIN bubbles that fill-in as the user types
     EditText pinTextField;
+    boolean tutorialMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +82,24 @@ public class PINActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
         });
 
-        onShowKeyboard(null);
+        tutorialMode = ResourceManager.shouldDoTutorial(this);
+        if (tutorialMode) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Welcome to PicPass!")
+                    .setMessage("PicPass lets you create complex, secure passwords by tapping images!\n\n" +
+                            "To get started, enter a PIN.\n" +
+                            "(You will need to remember this PIN in order to get the same passwords later!)")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onShowKeyboard(null);
+                        }
+                    })
+                    .setIcon(R.drawable.cape)
+                    .show();
+        } else {
+            onShowKeyboard(null);
+        }
     }
 
     @Override
@@ -95,6 +117,18 @@ public class PINActivity extends AppCompatActivity {
     private void onPINEntered() {
         Intent intent = new Intent(this, PasswordPickerActivity.class);
         intent.putExtra("pin", pinTextField.getText().toString());
+        if (tutorialMode) {
+            intent.putExtra("tutorialMode", true);
+
+            // Hide the keyboard manually on tutorial mode
+            // Otherwise it won't close til after the user dismisses the dialog on the next screen
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            View view = getCurrentFocus();
+            if (view == null) {
+                view = new View(this);
+            }
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         startActivity(intent);
     }
 }
