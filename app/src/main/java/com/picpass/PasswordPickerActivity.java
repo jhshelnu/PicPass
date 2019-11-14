@@ -40,7 +40,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
     private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
     private static final int MINIMUM_LENGTH = 5;
-    private static final int TIMEOUT_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
+    private static final int SESSION_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
     private static final int COOLDOWN_DURATION = 4; // number of seconds after password generation before another password generation is allowed
 
     private String pin;
@@ -82,7 +82,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
-        if (secondsInactive >= TIMEOUT_DURATION) {
+        if (secondsInactive >= SESSION_DURATION) {
             finish();
         }
     }
