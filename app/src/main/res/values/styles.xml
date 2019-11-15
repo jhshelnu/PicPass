@@ -4,6 +4,8 @@
         <item name="colorPrimary">@color/colorDarkBlue</item>
         <item name="colorPrimaryDark">@color/colorBackgroundGray</item>
         <item name="colorAccent">@color/colorDarkestBlue</item>
+        <item name="android:statusBarColor">@color/colorBackgroundGray</item>
+        <item name="android:navigationBarColor">@color/colorBackgroundGray</item>
     </style>
 
 </resources>

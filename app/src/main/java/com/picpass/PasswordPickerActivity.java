@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -82,10 +83,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[8] = findViewById(R.id.image8);
 
         if (getIntent().getBooleanExtra("tutorialMode", false)) {
-            new AlertDialog.Builder(this)
+            new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Theme_AppCompat_Light_Dialog))
                     .setTitle("Welcome to PicPass!")
                     .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
-                            "To customize your images, click the gallery icon in the top-left corner.\n"))
+                            "To customize your images, click the gallery icon in the top-left corner."))
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) { }
