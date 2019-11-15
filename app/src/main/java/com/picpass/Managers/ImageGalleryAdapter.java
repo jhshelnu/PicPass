@@ -16,16 +16,21 @@ import java.util.ArrayList;
 public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
     private static final String TAG = "ImageGalleryAdapter";
     private ArrayList<String> imageSet;
+    private ArrayList<ImageViewHolder> viewHolders;
 
     public ImageGalleryAdapter(ArrayList<String> imageSet) {
         this.imageSet = imageSet;
+        viewHolders = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.selectable_image, parent, false);
-        return new ImageViewHolder(imageSet, view);
+        ImageViewHolder holder = new ImageViewHolder(imageSet, view);
+
+        viewHolders.add(holder);
+        return holder;
     }
 
     @Override
@@ -49,5 +54,11 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageViewHolder> {
     @Override
     public int getItemCount() {
         return ResourceManager.galleryImages.size();
+    }
+
+    public void unCheckAll() {
+        for (ImageViewHolder holder : viewHolders) {
+            holder.unCheck();
+        }
     }
 }

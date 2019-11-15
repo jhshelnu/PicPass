@@ -45,4 +45,8 @@ class ImageViewHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+
+    public void unCheck() {
+        checked.setVisibility(View.INVISIBLE);
+    }
 }

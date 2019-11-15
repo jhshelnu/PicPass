@@ -27,17 +27,20 @@ import java.util.Locale;
 public class ImageGalleryActivity extends AppCompatActivity {
     public static final int REQUIRED_NUM_IMAGES = 9;
 
+    private ImageGalleryAdapter adapter;
     private ObservableArrayList<String> selectedImages;
     private TextView numSelected;
     private Button submitButton;
+    private Button clearButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_gallery);
 
-        submitButton = findViewById(R.id.btn_submit);
         numSelected = findViewById(R.id.num_selected);
+        submitButton = findViewById(R.id.btn_submit);
+        clearButton = findViewById(R.id.btn_clear);
 
         // When the adapter modifies the arraylist of selectedImages, this activity gets notified via the following callbacks (used to update UI)
         selectedImages = new ObservableArrayList<>();
@@ -69,7 +72,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
         galleryView.setLayoutManager(new GridLayoutManager(this, 3)); // number of columns
 
         // Set the adapter for the gallery recycler view (passes an empty observable arraylist for the adapter to populate with selected images)
-        final ImageGalleryAdapter adapter = new ImageGalleryAdapter(selectedImages);
+        adapter = new ImageGalleryAdapter(selectedImages);
         galleryView.setAdapter(adapter);
 
         updateUI();
@@ -80,6 +83,12 @@ public class ImageGalleryActivity extends AppCompatActivity {
      */
     public void updateUI() {
         numSelected.setText(String.format(Locale.getDefault(), "%d/%d", selectedImages.size(), REQUIRED_NUM_IMAGES));
+
+        if (selectedImages.size() > 0) {
+            clearButton.setVisibility(View.VISIBLE);
+        } else {
+            clearButton.setVisibility(View.GONE);
+        }
 
         if (selectedImages.size() == 9) {
             submitButton.setVisibility(View.VISIBLE);
@@ -99,5 +108,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
             setResult(RESULT_OK, (new Intent()).putExtra("newImages", selectedImages.toArray(new String[0])));
             finish();
         }
+    }
+
+    public void onClear(View v) {
+        selectedImages.clear();
+        adapter.unCheckAll();
     }
 }
