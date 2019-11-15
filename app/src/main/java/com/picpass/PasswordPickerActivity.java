@@ -46,7 +46,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private static final int MODIFY_IMAGE_SET_REQUEST_CODE = 0;
 
     private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
-    private static final int MINIMUM_LENGTH = 5;
+    private static final int MINIMUM_LENGTH = 5;    // minimum number of images in the sequence (repeats allowed) before password generation is allowed
     private static final int SESSION_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
     private static final int COOLDOWN_DURATION = 4; // number of seconds after password generation before another password generation is allowed
 
@@ -218,17 +218,59 @@ public class PasswordPickerActivity extends AppCompatActivity {
      */
     private String generatePassword(String toEncode, String key) {
         try {
+            // initiate sha-256
             String algorithm = "HmacSHA256";
             SecretKeySpec sKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
             Mac sha256_HMAC = Mac.getInstance(algorithm);
             sha256_HMAC.init(sKey);
 
-            // "aA1!" guarantees the passwords have: lowercase, uppercase, number, symbol
+            // generate password and add guarantee
             String encodedString = Base64.encodeToString(sha256_HMAC.doFinal(toEncode.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP | Base64.NO_PADDING | Base64.URL_SAFE);
-            return encodedString.substring(0, GENERATED_PASSWORD_LENGTH - 4).concat("aA1!").replace('-', '!').replace('_', '@');
+            String passwordBeforeGuarantee = encodedString.substring(0, GENERATED_PASSWORD_LENGTH - 4).replace('-', '!').replace('_', '@');
+            return addGuarantee(passwordBeforeGuarantee);
+
         } catch (NoSuchAlgorithmException | InvalidKeyException e){
             Log.wtf(TAG, Log.getStackTraceString(e));
             return null;
         }
+    }
+
+    /**
+     * addGuarantee returns a string guaranteed to contain a lowercase letter, an uppercase letter, a number, and a symbol
+     * @param orig Original string representing an almost complete password, just needs the guarantee described above.
+     * @return A modified string of the original that meets the guarantee. This is the completed password.
+     */
+    private String addGuarantee(String orig) {
+        StringBuilder sb = new StringBuilder(orig);
+
+        int hash;
+        char hashChar;
+        int pos;
+
+        // add a lowercase letter
+        hash = Math.abs(sb.toString().hashCode());
+        hashChar = (char) ((hash % 26) + (int) 'a');
+        pos = hash % (sb.length() + 1);
+        sb.insert(pos, hashChar);
+
+        // add an uppercase letter
+        hash = Math.abs(sb.toString().hashCode());
+        hashChar = (char) ((hash % 26) + (int) 'A');
+        pos = hash % (sb.length() + 1);
+        sb.insert(pos, hashChar);
+
+        // add a number
+        hash = Math.abs(sb.toString().hashCode());
+        hashChar = (char) ((hash % 10) + (int) '0');
+        pos = hash % (sb.length() + 1);
+        sb.insert(pos, hashChar);
+
+        // add a symbol
+        hash = Math.abs(sb.toString().hashCode());
+        hashChar = (hash % 2 == 0) ? '!' : '@';
+        pos = hash % (sb.length() + 1);
+        sb.insert(pos, hashChar);
+
+        return sb.toString();
     }
 }
