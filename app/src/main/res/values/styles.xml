@@ -8,4 +8,9 @@
         <item name="android:navigationBarColor">@color/colorBackgroundGray</item>
     </style>
 
+    <style name="PicPassDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorAccent">@color/colorDarkBlue</item>
+        <item name="android:colorPrimary">@android:color/white</item>
+    </style>
+
 </resources>

@@ -83,7 +83,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[8] = findViewById(R.id.image8);
 
         if (getIntent().getBooleanExtra("tutorialMode", false)) {
-            new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.Theme_AppCompat_Light_Dialog))
+            new AlertDialog.Builder(this, R.style.PicPassDialog)
                     .setTitle("Welcome to PicPass!")
                     .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
                             "To customize your images, click the gallery icon in the top-left corner."))
