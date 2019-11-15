@@ -194,8 +194,8 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
         if (generatedPassword != null) {
-            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
-//            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
 
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
