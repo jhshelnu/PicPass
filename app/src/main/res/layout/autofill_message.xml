@@ -12,11 +12,10 @@
         android:layout_marginLeft="15dp"/>
 
     <TextView
-        android:id="@+id/autofill_suggestion_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18dp"
-        android:text="Autofill with PicPass"
+        android:text="Login with PicPass"
         android:textStyle="bold"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"

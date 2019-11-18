@@ -14,6 +14,7 @@ import android.service.autofill.FillResponse;
 import android.service.autofill.SaveCallback;
 import android.service.autofill.SaveRequest;
 import android.text.InputType;
+import android.util.Log;
 import android.view.autofill.AutofillId;
 import android.view.autofill.AutofillValue;
 import android.widget.RemoteViews;
@@ -26,10 +27,19 @@ import com.picpass.PINActivity;
 import com.picpass.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * PicPassAutoFillService allows for autofilling PicPass passwords directly into any other app
+ * The service will check for password fields and suggest the autofill feature below the field.
+ * Selecting this option launches the user into PicPass in the autofill flow.
+ * @author John Shelnutt, Jackson Gregory
+ */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class PicPassAutofillService extends AutofillService {
+    private static final String TAG = "PicPassAutoFillService";
+
     public static final String EXTRA_AUTOFILL_MODE = "picpass_autofill_mode";
     public static final String EXTRA_AUTOFILL_FIELD_IDS = "picpass_autofill_fields";
 
@@ -86,10 +96,23 @@ public class PicPassAutofillService extends AutofillService {
     }
 
     private boolean isPasswordField(AssistStructure.ViewNode node) {
+        // Try to detect first through autofill hints directly
+        String[] autofillHints = node.getAutofillHints();
+        if (autofillHints != null && autofillHints.length > 0) {
+            return Arrays.asList(autofillHints).contains("password");
+        }
+
+        // Then try through the traditional hint
+        String hint = node.getHint();
+        if (hint != null) {
+            return node.getHint().toLowerCase().contains("password");
+        }
+
+        // If both of the above are not set,
+        // a password field is an EditText with an explicit password input type
         return node.getClassName().contains("EditText") &&
                 (node.getInputType() == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD ||
                 node.getInputType() == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-                node.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
-                (node.getHint() != null && node.getHint().toLowerCase().contains("password")));
+                node.getInputType() == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
     }
 }
