@@ -33,6 +33,15 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".managers.PicPassAutofillService"
+            android:label="PicPass Autofill Service"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

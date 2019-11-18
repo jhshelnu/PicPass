@@ -1,27 +1,41 @@
 package com.picpass;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.assist.AssistStructure;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.view.autofill.AutofillId;
+import android.view.autofill.AutofillValue;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 
-import com.picpass.Managers.ResourceManager;
+import com.picpass.managers.ResourceManager;
+
+import java.util.List;
+
+import static android.view.autofill.AutofillManager.EXTRA_AUTHENTICATION_RESULT;
+import static com.picpass.PasswordPickerActivity.EXTRA_GENERATED_PASSWORD;
+import static com.picpass.managers.PicPassAutofillService.EXTRA_AUTOFILL_FIELD_IDS;
+import static com.picpass.managers.PicPassAutofillService.EXTRA_AUTOFILL_MODE;
 
 public class PINActivity extends AppCompatActivity {
     private static final String TAG = "PINActivity";
+    private static final int AUTOFILL_REQUEST_CODE = 0;
 
-    ImageView bubble1, bubble2, bubble3, bubble4; // The 4 PIN bubbles that fill-in as the user types
-    EditText pinTextField;
+    private ImageView bubble1, bubble2, bubble3, bubble4; // The 4 PIN bubbles that fill-in as the user types
+    private EditText pinTextField;
     boolean tutorialMode;
 
     @Override
@@ -114,6 +128,10 @@ public class PINActivity extends AppCompatActivity {
         keyboardManager.showSoftInput(pinTextField, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    private boolean isAutofillMode() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIntent().getBooleanExtra(EXTRA_AUTOFILL_MODE, false);
+    }
+
     private void onPINEntered() {
         Intent intent = new Intent(this, PasswordPickerActivity.class);
         intent.putExtra("pin", pinTextField.getText().toString());
@@ -129,6 +147,35 @@ public class PINActivity extends AppCompatActivity {
             }
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        startActivity(intent);
+
+        if (isAutofillMode()) {
+            intent.putExtra(EXTRA_AUTOFILL_MODE, true);
+            startActivityForResult(intent, AUTOFILL_REQUEST_CODE);
+        } else {
+            startActivity(intent);
+        }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOFILL_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (isAutofillMode()) {
+                String password = data.getStringExtra(EXTRA_GENERATED_PASSWORD);
+
+                Dataset.Builder builder = new Dataset.Builder(new RemoteViews(getPackageName(), R.layout.autofill_message));
+
+                List<AutofillId> passwordFieldAutofillIDs = getIntent().getParcelableArrayListExtra(EXTRA_AUTOFILL_FIELD_IDS);
+                for (AutofillId id : passwordFieldAutofillIDs) {
+                    builder.setValue(id, AutofillValue.forText(password));
+                }
+
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_AUTHENTICATION_RESULT, builder.build());
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+    }
+
 }

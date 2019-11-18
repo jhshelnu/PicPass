@@ -8,11 +8,11 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,7 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.picpass.Managers.ResourceManager;
+import com.picpass.managers.ResourceManager;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -28,14 +28,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import static com.picpass.Managers.ResourceManager.getDrawableIdFromString;
+import static com.picpass.managers.PicPassAutofillService.EXTRA_AUTOFILL_MODE;
+import static com.picpass.managers.ResourceManager.getDrawableIdFromString;
 
 /**
  * PasswordPickerActivity is responsible for generating passwords based on image selection input.
@@ -44,6 +44,7 @@ import static com.picpass.Managers.ResourceManager.getDrawableIdFromString;
 public class PasswordPickerActivity extends AppCompatActivity {
     private static final String TAG = "PasswordPickerActivity";
     private static final String CLIPBOARD_LABEL = "picpass_password";
+    public static final String EXTRA_GENERATED_PASSWORD = "picpass_generated_passwor_extra";
     private static final int MODIFY_IMAGE_SET_REQUEST_CODE = 0;
 
     private static final int GENERATED_PASSWORD_LENGTH = 30; // WARNING: CHANGING THIS BREAKS EXISTING PASSWORDS!!!!
@@ -82,17 +83,19 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
-        if (getIntent().getBooleanExtra("tutorialMode", false)) {
+        if (isAutofillMode()) {
+            ((Button)findViewById(R.id.generate_btn)).setText("Autofill password");
+        } else if (getIntent().getBooleanExtra("tutorialMode", false)) {
             new AlertDialog.Builder(this, R.style.PicPassDialog)
-                    .setTitle("Welcome to PicPass!")
-                    .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
-                            "To customize your images, click the gallery icon in the top-left corner."))
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) { }
-                    })
-                    .setIcon(R.drawable.cape)
-                    .show();
+                .setTitle("Welcome to PicPass!")
+                .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
+                        "To customize your images, click the gallery icon in the top-left corner."))
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) { }
+                })
+                .setIcon(R.drawable.cape)
+                .show();
         }
 
         imageNames = ResourceManager.loadImageSet(this);
@@ -112,6 +115,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         inactivityStartTime = Calendar.getInstance();
+    }
+
+    private boolean isAutofillMode() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && getIntent().getBooleanExtra(EXTRA_AUTOFILL_MODE, false);
     }
 
     /**
@@ -169,7 +176,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates a secure password and copies it to the clipboard.
+     * Creates a secure password and copies it to the clipboard, or returns the password to be autofilled.
      * @param v View passed from onClick (unused)
      */
     public void onGeneratePassword(View v) {
@@ -195,16 +202,23 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
         String generatedPassword = generatePassword(pin, TextUtils.join("", sequence));
         if (generatedPassword != null) {
+            if (isAutofillMode()) {
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_GENERATED_PASSWORD, generatedPassword);
+
+                setResult(RESULT_OK, intent);
+                finish();
+            } else {
 //            Toast.makeText(this, generatedPassword, Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.password_generation_success), Toast.LENGTH_SHORT).show();
 
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                clipboard.setPrimaryClip(ClipData.newPlainText(CLIPBOARD_LABEL, generatedPassword));
 
-            sequence.clear();
-            backspaceButton.setVisibility(View.INVISIBLE);
-            cooldownStartTime = Calendar.getInstance(); // reset the cooldown start time
-
+                sequence.clear();
+                backspaceButton.setVisibility(View.INVISIBLE);
+                cooldownStartTime = Calendar.getInstance(); // reset the cooldown start time
+            }
         } else {
             Toast.makeText(this, "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show();
         }

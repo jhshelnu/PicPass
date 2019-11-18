@@ -1,4 +1,4 @@
-package com.picpass.Managers;
+package com.picpass.managers;
 
 import android.util.Log;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.picpass.Managers;
+package com.picpass.managers;
 
 import android.view.View;
 import android.view.animation.Animation;

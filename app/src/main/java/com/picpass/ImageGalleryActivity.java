@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.picpass.Managers.ImageGalleryAdapter;
-import com.picpass.Managers.ResourceManager;
+import com.picpass.managers.ImageGalleryAdapter;
+import com.picpass.managers.ResourceManager;
 
 import java.util.Arrays;
 import java.util.List;
