@@ -16,6 +16,7 @@ import com.picpass.managers.ImageGalleryAdapter;
 import com.picpass.managers.ResourceManager;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,12 +27,15 @@ import java.util.Locale;
  */
 public class ImageGalleryActivity extends AppCompatActivity {
     public static final int REQUIRED_NUM_IMAGES = 9;
+    private static final int SESSION_DURATION = 60; // number of seconds being out of this activity that requires PIN re-entry
 
     private ImageGalleryAdapter adapter;
     private ObservableArrayList<String> selectedImages;
     private TextView numSelected;
     private Button submitButton;
     private Button clearButton;
+
+    private Calendar inactivityStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,5 +117,22 @@ public class ImageGalleryActivity extends AppCompatActivity {
     public void onClear(View v) {
         selectedImages.clear();
         adapter.unCheckAll();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (inactivityStartTime != null) { // will be null when returning from the gallery
+            long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
+            if (secondsInactive >= SESSION_DURATION) {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        inactivityStartTime = Calendar.getInstance();
     }
 }

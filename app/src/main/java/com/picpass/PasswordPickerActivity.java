@@ -124,9 +124,11 @@ public class PasswordPickerActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
-        if (secondsInactive >= SESSION_DURATION) {
-            finish();
+        if (inactivityStartTime != null) { // will be null when returning from the gallery
+            long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
+            if (secondsInactive >= SESSION_DURATION) {
+                finish();
+            }
         }
     }
 
@@ -191,6 +193,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        inactivityStartTime = null;
         if (requestCode == MODIFY_IMAGE_SET_REQUEST_CODE && resultCode == RESULT_OK) {
             imageNames = Arrays.asList(data.getStringArrayExtra("newImages"));
             initializeImages(imageNames);
