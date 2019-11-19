@@ -181,9 +181,9 @@ public class PINActivity extends AppCompatActivity {
             new AlertDialog.Builder(this, R.style.PicPassDialog)
                     .setIcon(R.drawable.cape)
                     .setTitle("Enable PicPass Autofill")
-                    .setMessage("PicPass can be used directlywhen signing into any other app!\n\n" +
+                    .setMessage("PicPass can be used directly when signing into any other app!\n\n" +
                             "You can do this by tapping \"Login with PicPass\" below any password field.\n\n" +
-                            "Select \"Enable\" below to be taken into your phone's autofill settings, then simply select PicPass!")
+                            "Select \"Enable\", then simply select PicPass!")
                     .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
