@@ -183,7 +183,7 @@ public class PINActivity extends AppCompatActivity {
                     .setTitle("Enable PicPass Autofill")
                     .setMessage("PicPass can be used directly when signing into any other app!\n\n" +
                             "You can do this by tapping \"Login with PicPass\" below any password field.\n\n" +
-                            "Select \"Enable\", then simply select PicPass!")
+                            "Select \"Enable\" then simply select PicPass!")
                     .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
