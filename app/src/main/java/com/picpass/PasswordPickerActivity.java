@@ -20,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.picpass.managers.PasswordPickerDotAdapter;
@@ -107,9 +108,16 @@ public class PasswordPickerActivity extends AppCompatActivity {
                 .show();
         }
 
+        // Initialize password dots adapter
         adapter = new PasswordPickerDotAdapter(sequence);
+
+        // Initialize layout manager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, true);
+        layoutManager.setStackFromEnd(true);
+
+        // Initialize recycler view with adapter and layout manager
         RecyclerView passwordDotRecyclerView = findViewById(R.id.recycler_view_password_dots);
-        passwordDotRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        passwordDotRecyclerView.setLayoutManager(layoutManager);
         passwordDotRecyclerView.setAdapter(adapter);
     }
 
