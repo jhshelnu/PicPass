@@ -3,6 +3,8 @@ package com.picpass;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.picpass.managers.PasswordPickerDotAdapter;
 import com.picpass.managers.ResourceManager;
 
 import java.nio.charset.StandardCharsets;
@@ -58,6 +61,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
     private ArrayList<String> sequence;
     private Button backspaceButton;
     private Animation animation;
+    private PasswordPickerDotAdapter adapter;
 
     private Calendar inactivityStartTime;
     private Calendar cooldownStartTime;
@@ -83,9 +87,14 @@ public class PasswordPickerActivity extends AppCompatActivity {
         images[7] = findViewById(R.id.image7);
         images[8] = findViewById(R.id.image8);
 
+        imageNames = ResourceManager.loadImageSet(this);
+        initializeImages(imageNames);
+
         if (isAutofillMode()) {
             ((Button)findViewById(R.id.generate_btn)).setText("Autofill password");
-        } else if (getIntent().getBooleanExtra("tutorialMode", false)) {
+        }
+
+        if (getIntent().getBooleanExtra("tutorialMode", false)) {
             new AlertDialog.Builder(this, R.style.PicPassDialog)
                 .setTitle("Welcome to PicPass!")
                 .setMessage(("Tap at least 5 images (repeats allowed) and click \"Copy Password\" to get a password!\n\n" +
@@ -98,8 +107,10 @@ public class PasswordPickerActivity extends AppCompatActivity {
                 .show();
         }
 
-        imageNames = ResourceManager.loadImageSet(this);
-        initializeImages(imageNames);
+        adapter = new PasswordPickerDotAdapter(sequence);
+        RecyclerView passwordDotRecyclerView = findViewById(R.id.recycler_view_password_dots);
+        passwordDotRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        passwordDotRecyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -144,12 +155,14 @@ public class PasswordPickerActivity extends AppCompatActivity {
         v.startAnimation(animation);
         sequence.add(String.valueOf(v.getTag()));
         backspaceButton.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
     }
 
     public void onBackspace(View v) {
         if (sequence.size() > 0) {
             backspaceButton.startAnimation(animation);
             sequence.remove(sequence.size() - 1);
+            adapter.notifyDataSetChanged();
         }
 
         if (sequence.size() == 0) {
@@ -158,12 +171,13 @@ public class PasswordPickerActivity extends AppCompatActivity {
     }
 
     public void onLaunchGallery(View v) {
-        sequence.clear();
-        backspaceButton.setVisibility(View.INVISIBLE);
-
         Intent intent = new Intent(this, ImageGalleryActivity.class);
         intent.putExtra("currentImages", imageNames.toArray(new String[0]));
         startActivityForResult(intent, MODIFY_IMAGE_SET_REQUEST_CODE);
+
+        sequence.clear();
+        backspaceButton.setVisibility(View.INVISIBLE);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -187,6 +201,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
                 Toast.makeText(this, String.format(Locale.getDefault(), "You must wait another %d %s", remainingCooldownSeconds, remainingCooldownSeconds == 1 ? "second" : "seconds"), Toast.LENGTH_SHORT).show();
                 sequence.clear();
                 backspaceButton.setVisibility(View.INVISIBLE);
+                adapter.notifyDataSetChanged();
                 return;
             }
         }
@@ -217,6 +232,7 @@ public class PasswordPickerActivity extends AppCompatActivity {
 
                 sequence.clear();
                 backspaceButton.setVisibility(View.INVISIBLE);
+                adapter.notifyDataSetChanged();
                 cooldownStartTime = Calendar.getInstance(); // reset the cooldown start time
             }
         } else {
