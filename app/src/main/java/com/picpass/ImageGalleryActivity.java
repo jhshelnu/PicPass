@@ -125,6 +125,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
         if (inactivityStartTime != null) { // will be null when returning from the gallery
             long secondsInactive = (Calendar.getInstance().getTimeInMillis() - inactivityStartTime.getTimeInMillis()) / 1000;
             if (secondsInactive >= SESSION_DURATION) {
+                Intent timeoutIntent = new Intent(this, PINActivity.class);
+                timeoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(timeoutIntent);
                 finish();
             }
         }
