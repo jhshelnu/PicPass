@@ -76,7 +76,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
         galleryView.setLayoutManager(new GridLayoutManager(this, 3)); // number of columns
 
         // Set the adapter for the gallery recycler view (passes an empty observable arraylist for the adapter to populate with selected images)
-        adapter = new ImageGalleryAdapter(selectedImages);
+        adapter = new ImageGalleryAdapter(this, selectedImages);
         galleryView.setAdapter(adapter);
 
         updateUI();

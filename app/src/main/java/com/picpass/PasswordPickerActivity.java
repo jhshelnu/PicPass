@@ -39,7 +39,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import static com.picpass.managers.PicPassAutofillService.EXTRA_AUTOFILL_MODE;
-import static com.picpass.managers.ResourceManager.getDrawableIdFromString;
 
 /**
  * PasswordPickerActivity is responsible for generating passwords based on image selection input.
@@ -151,13 +150,12 @@ public class PasswordPickerActivity extends AppCompatActivity {
             throw new IllegalArgumentException("imageNames array must non-null and of size 9!");
         }
 
-        try {
-            for (int i = 0; i < 9; i++) {
-                images[i].setImageResource(getDrawableIdFromString(imageNames.get(i)));
-                images[i].setTag(imageNames.get(i));
-            }
-        } catch (ReflectiveOperationException e) {
-            Log.wtf(TAG, Log.getStackTraceString(e));
+        for (int i = 0; i < 9; i++) {
+            String name = imageNames.get(i);
+            int resID = getResources().getIdentifier(name, "drawable", getPackageName());
+            Log.d(TAG, getPackageName());
+            images[i].setTag(name);
+            images[i].setImageResource(resID);
         }
     }
 

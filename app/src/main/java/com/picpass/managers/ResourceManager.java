@@ -167,15 +167,15 @@ public class ResourceManager {
         }
     }
 
-    /**
-     * Gets the android auto-generated resource id given the string name of the resource. Ex. "boat" returns R.id.boat or throws.
-     * @param resName The string resource name for which the generated ID needs to be retrieved.
-     * @return The associated ID for the resource specified by resName
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     */
-    public static int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = R.drawable.class.getDeclaredField(resName);
-        return field.getInt(field);
-    }
+//    /**
+//     * Gets the android auto-generated resource id given the string name of the resource. Ex. "boat" returns R.id.boat or throws.
+//     * @param resName The string resource name for which the generated ID needs to be retrieved.
+//     * @return The associated ID for the resource specified by resName
+//     * @throws NoSuchFieldException
+//     * @throws IllegalAccessException
+//     */
+//    public static int getDrawableIdFromString(String resName) throws NoSuchFieldException, IllegalAccessException {
+//        Field field = R.drawable.class.getDeclaredField(resName);
+//        return field.getInt(field);
+//    }
 }
